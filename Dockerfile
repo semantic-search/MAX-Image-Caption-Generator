@@ -32,6 +32,6 @@ COPY . /workspace
 # check file integrity
 RUN sha512sum -c sha512sums.txt
 
-EXPOSE 5000
+# EXPOSE 5000
 
-CMD python app.py
+# CMD python app.py
