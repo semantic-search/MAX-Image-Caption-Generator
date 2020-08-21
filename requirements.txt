@@ -3,3 +3,4 @@ Pillow==6.2.0
 numpy==1.17.4
 kafka-python
 redis
+python-dotenv
