@@ -62,7 +62,7 @@ for message in consumer_max_caption:
 
     preds = model_wrapper.predict(data)
 
-    result = {'status': 'error'}
+    result = {'status': 'error', 'image_id': image_id}
     label_preds = [{'index': p[0], 'caption': p[1], 'probability': p[2]}
                    for p in [x for x in preds]]
     result['predictions'] = label_preds
