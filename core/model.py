@@ -27,9 +27,18 @@ from core.inference_utils import vocabulary
 from core.inference_utils import caption_generator
 
 from config import DEFAULT_MODEL_PATH, VOCAB_FILE
+from PIL import Image
+import io
 
 logger = logging.getLogger()
 
+
+def read_image(image_data):
+    try:
+        image = Image.open(io.BytesIO(image_data)).convert('RGB')
+    except Exception as e:
+        logger.warn(str(e))
+    return image
 
 class ModelWrapper(MAXModelWrapper):
 

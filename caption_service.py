@@ -1,4 +1,4 @@
-from core.model import ModelWrapper
+from core.model import ModelWrapper, read_image
 import os
 
 def caption(img):
@@ -9,7 +9,9 @@ def caption(img):
 
 def predict(file_name, doc=False):
 
-    preds = caption(file_name)
+    image = read_image(file_name)
+
+    preds = caption(image)
 
     result = {}
     full_res = [{'caption': p[1], 'probability': p[2]}
