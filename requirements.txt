@@ -4,3 +4,4 @@ numpy==1.17.4
 kafka-python
 redis
 python-dotenv
+mongoengine

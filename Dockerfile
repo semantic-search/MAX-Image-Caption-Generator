@@ -29,6 +29,5 @@ RUN pip install -r requirements.txt
 
 COPY . /workspace
 
-# EXPOSE 5000
 
-CMD python predict.py
+# CMD python predict.py
