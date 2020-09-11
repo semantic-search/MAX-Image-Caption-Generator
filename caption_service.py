@@ -13,7 +13,6 @@ def predict(file_name, doc=False):
 
     preds = caption(image)
 
-    result = {}
     full_res = [{'caption': p[1], 'probability': p[2]}
                    for p in [x for x in preds]]
     text_res = [{'caption': p[1]}
