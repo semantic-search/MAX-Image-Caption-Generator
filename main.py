@@ -36,7 +36,6 @@ if __name__ == "__main__":
                 images_array.append(pdf_image)
             full_res_list = []
             text_res_list = []
-            text_predictions = []
             for image in images_array:
                 image_results = predict(image, doc=True)
                 full_res = image_results["full_res"]
