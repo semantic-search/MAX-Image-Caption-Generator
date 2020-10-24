@@ -1,7 +1,7 @@
-tensorflow==1.15.2
-Pillow==6.2.0
-numpy==1.17.4
-kafka-python
-redis
+# git+https://github.com/ruotianluo/meshed-memory-transformer.git
+# transformers
 python-dotenv
+kafka-python
 mongoengine
+
+requests
