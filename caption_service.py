@@ -13,17 +13,20 @@ def caption_api(file_name):
     data = response.content.decode()
     print("decoded data", data)
     data = json.loads(data)
-    print(data)
-    return data.predictions
+    print(data, "in caption api")
+    return data
 
 def predict(file_name):
     try:
         preds = caption_api(file_name)
+        preds = preds['predictions']
+        print(f"data from api {preds} of type {type(preds)}")
+        
         final_labels = []
         final_scores = []
 
-        [final_labels.append(p[1]) for p in [x for x in preds]]
-        [final_scores.append(float(p[2])) for p in [x for x in preds]]
+        [final_labels.append(predict["caption"]) for predict in preds]
+        [final_scores.append(predict["probability"]) for predict in preds]
 
         final_result = {
         "labels": final_labels,
