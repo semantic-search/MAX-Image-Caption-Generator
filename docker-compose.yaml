@@ -1,9 +1,9 @@
 version: '3'
 services:
   api:
-    image: quay.io/codait/max-image-caption-generator
-    # ports: 
-      # - "5000:5000"
+    image: ghcr.io/semantic-search/max-caption-org:latest
+    ports: 
+      - "8080:5000"
   kafka-consumer:
     build:
       context: ./

@@ -1,0 +1,1 @@
+ghcr.io/semantic-search/max-caption-org:latest
