@@ -5,6 +5,7 @@ services:
     ports: 
       - "8080:5000"
   kafka-consumer:
+    image: ghcr.io/semantic-search/max-caption-consumer:latest
     build:
       context: ./
       dockerfile: ./Dockerfile
