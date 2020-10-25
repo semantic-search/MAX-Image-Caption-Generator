@@ -5,20 +5,26 @@ import init
 from caption_service import predict
 import globals
 import requests
+from init import ERR_LOGGER
+import os
 
 global_init()
 
-print("main file")
+FILE_ID = ""
+
 def save_to_db(db_object, labels, scores):
     try:
+        print("*****************SAVING TO DB******************************")
         print("in save")
         print(db_object)
         print(db_object.id)
         db_object.labels = labels
         db_object.scores = scores
         db_object.save()
+        print("*****************SAVED TO DB******************************")
     except Exception as e:
-        print(f"{e} Error to save in DB")
+        print(f"{e} ERROR IN SAVE TO DB FILE ID {FILE_ID}")
+        ERR_LOGGER(f"{e} ERROR IN SAVE TO DB FILE ID {FILE_ID}")
 
 def update_state(file_name):
     payload = {
@@ -32,6 +38,7 @@ def update_state(file_name):
         requests.request("POST", globals.DASHBOARD_URL,  data=payload)
     except Exception as e:
         print(f"{e} EXCEPTION IN UPDATE STATE API CALL......")
+        ERR_LOGGER(f"{e} EXCEPTION IN UPDATE STATE API CALL......FILE ID {FILE_ID}")
 
 if __name__ == "__main__":
     print("Connected to Kafka at " + globals.KAFKA_HOSTNAME + ":" + globals.KAFKA_PORT)
@@ -44,9 +51,13 @@ if __name__ == "__main__":
             db_object = Cache.objects.get(pk=db_key)
         except Exception as e:
             print(f"{e} EXCEPTION IN GET PK... continue")
+            ERR_LOGGER(f"{e} EXCEPTION IN GET PK... continue")
             continue
 
         file_name = db_object.file_name
+
+        final_labels=db_object.labels
+        final_scores=db_object.scores
         
         print("#############################################")
         print("########## PROCESSING FILE " + file_name)
@@ -63,15 +74,14 @@ if __name__ == "__main__":
                         file_to_save.write(image.file.read())
                     images_array.append(pdf_image)
 
-                to_save  = []
-                final_labels=db_object.labels
-                final_scores=db_object.scores
                 for image in images_array:
 
                     try:
                         response = predict(file_name=image)
                     except Exception as e:
                         print(f"{e} ERROR IN PREDICT")
+                        ERR_LOGGER(f"{e} Exception in predict FILE ID {FILE_ID}")
+                        os.remove(image)
                         continue
                     # final_labels.extend(response["labels"])
                     for label,score in zip(response["labels"],response['scores']):
@@ -94,10 +104,26 @@ if __name__ == "__main__":
             """image"""
             with open(file_name, 'wb') as file_to_save:
                 file_to_save.write(db_object.file.read())
-            image_result = predict(file_name)
-            labels=image_result['labels']
-            scores=image_result['scores']
-            save_to_db(db_object,labels,scores)
+            try:
+                response = predict(file_name)
+            except Exception as e:
+                print("ERROR IN PREDICE")
+                ERR_LOGGER(f"{e} Exception in predict FILE ID {FILE_ID}")
+                os.remove(file_name)
+                continue
+
+            for label,score in zip(response["labels"],response['scores']):
+                if label not in final_labels:
+                    final_labels.append(label.strip())
+                    final_scores.append(score)
+                else:
+                    x = final_labels.index(label)
+                    score_to_check = final_scores[x]
+                    if score > score_to_check:
+                        final_scores[x] = score
+
+            print("to_save audio", final_labels,final_scores)
+            save_to_db(db_object,final_labels,final_scores)
             print(".....................FINISHED PROCESSING FILE.....................")
             update_state(file_name)
     

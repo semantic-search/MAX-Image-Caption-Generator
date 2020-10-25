@@ -6,10 +6,12 @@ def caption_api(file_name):
     with open(file_name, 'rb') as f:
         read_data = f.read()
     files = {
-        'file': read_data,
+        'image': read_data,
     }
-    response = requests.post('http://api/model/predict/', files=files)
+    response = requests.post('http://api:5000/model/predict', files=files)
+    print("api res", response)
     data = response.content.decode()
+    print("decoded data", data)
     data = json.loads(data)
     print(data)
     return data.predictions
